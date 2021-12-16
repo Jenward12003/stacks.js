@@ -34,7 +34,7 @@ import {
 } from '../src/clarity';
 import { BufferReader } from '../src/bufferReader';
 import { cvToString, cvToJSON, cvToValue, getCVTypeString } from '../src/clarity/clarityValue';
-import BN from 'bn.js';
+import { BN } from '@stacks/common';
 
 const ADDRESS = 'SP2JXKMSH007NPYAQHKJPQMAQYAD90NQGTVJVQ02B';
 

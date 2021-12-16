@@ -1,4 +1,4 @@
-import { Buffer } from '@stacks/common';
+import { Buffer, BN } from '@stacks/common';
 import * as blockstack from 'blockstack';
 import * as bitcoin from 'bitcoinjs-lib';
 import * as process from 'process';
@@ -6,7 +6,6 @@ import * as fs from 'fs';
 import * as winston from 'winston';
 import cors from 'cors';
 
-import BN from 'bn.js';
 import * as crypto from 'crypto';
 import * as bip39 from 'bip39';
 import express from 'express';

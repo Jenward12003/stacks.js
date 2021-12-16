@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Buffer, IntegerType } from '@stacks/common';
+import { Buffer, IntegerType, BN } from '@stacks/common';
 import {
   makeContractCall,
   makeContractDeploy,
@@ -14,7 +14,6 @@ import {
 import { StacksTestnet, StacksNetwork } from '@stacks/network';
 
 import RPCClient from '@blockstack/rpc-client';
-import BN from 'bn.js';
 
 interface ContractCallOptions {
   contractName: string;

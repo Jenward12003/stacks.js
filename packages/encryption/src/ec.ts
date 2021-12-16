@@ -1,8 +1,7 @@
 import { Buffer } from '@stacks/common';
 import { ec as EllipticCurve } from 'elliptic';
-import * as BN from 'bn.js';
 import { randomBytes } from './cryptoRandom';
-import { FailedDecryptionError } from '@stacks/common';
+import { FailedDecryptionError, BN } from '@stacks/common';
 import { getPublicKeyFromPrivate } from './keys';
 import { hashSha256Sync, hashSha512Sync } from './sha2Hash';
 import { createHmacSha256 } from './hmacSha256';
@@ -328,8 +327,8 @@ export async function encryptECIES(
   const ecPK = ecurve.keyFromPublic(publicKey, 'hex').getPublic();
   const ephemeralSK = ecurve.genKeyPair();
   const ephemeralPK = Buffer.from(ephemeralSK.getPublic().encodeCompressed());
-  const sharedSecret = ephemeralSK.derive(ecPK) as BN;
-  const sharedSecretBuffer = getBufferFromBN(sharedSecret);
+  const sharedSecret = ephemeralSK.derive(ecPK).toString();
+  const sharedSecretBuffer = getBufferFromBN(new BN(sharedSecret));
   const sharedKeys = sharedSecretToKeys(sharedSecretBuffer);
 
   const initializationVector = randomBytes(16);
@@ -392,8 +391,8 @@ export async function decryptECIES(
     );
   }
 
-  const sharedSecret = ecSK.derive(ephemeralPK) as BN;
-  const sharedSecretBuffer = getBufferFromBN(sharedSecret);
+  const sharedSecret = ecSK.derive(ephemeralPK).toString();
+  const sharedSecretBuffer = getBufferFromBN(new BN(sharedSecret));
 
   const sharedKeys = sharedSecretToKeys(sharedSecretBuffer);
 

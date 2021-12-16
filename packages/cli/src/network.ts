@@ -1,6 +1,6 @@
 import blockstack from 'blockstack';
 import * as bitcoin from 'bitcoinjs-lib';
-import BN from 'bn.js';
+import { BN } from '@stacks/common';
 import fetch from 'node-fetch';
 
 import { CLI_CONFIG_TYPE } from './argparse';
@@ -22,7 +22,7 @@ export interface CLI_NETWORK_OPTS {
 
 export interface PriceType {
   units: 'BTC' | 'STACKS';
-  amount: import('bn.js');
+  amount: BN;
 }
 
 export type NameInfoType = {

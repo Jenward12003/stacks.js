@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Buffer } from '@stacks/common';
+import { Buffer, BN } from '@stacks/common';
 import {
   AddressHashMode,
   BufferCV,
@@ -8,7 +8,6 @@ import {
   TupleCV,
 } from '@stacks/transactions';
 import { address } from 'bitcoinjs-lib';
-import BN from 'bn.js';
 import { StackingErrors } from './constants';
 
 export class InvalidAddressError extends Error {

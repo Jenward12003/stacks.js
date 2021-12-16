@@ -1,4 +1,4 @@
-import { Buffer } from '@stacks/common';
+import { Buffer, BN } from '@stacks/common';
 import { serializeAddress, serializeLPString } from '../types';
 import { createLPString } from '../postcondition-types';
 import {
@@ -19,7 +19,6 @@ import { BufferArray } from '../utils';
 import { SerializationError } from '../errors';
 import { StringAsciiCV, StringUtf8CV } from './types/stringCV';
 import { CLARITY_INT_BYTE_SIZE, CLARITY_INT_SIZE } from '../constants';
-import BN from 'bn.js';
 
 function bufferWithTypeID(typeId: ClarityType, buffer: Buffer): Buffer {
   const id = Buffer.from([typeId]);

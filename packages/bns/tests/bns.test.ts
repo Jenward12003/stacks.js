@@ -30,8 +30,7 @@ import {
 
 import {bufferCVFromString, decodeFQN, getZonefileHash, uintCVFromBN} from "../src/utils";
 
-import BN from "bn.js";
-import { ChainID } from "@stacks/common";
+import { ChainID, BN } from "@stacks/common";
 
 beforeEach(() => {
   fetchMock.resetMocks();

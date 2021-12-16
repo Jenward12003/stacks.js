@@ -1,4 +1,4 @@
-import { Buffer, IntegerType, intToBigInt } from '@stacks/common';
+import { Buffer, IntegerType, intToBigInt, BN } from '@stacks/common';
 import {
   makeContractCall,
   bufferCV,
@@ -30,7 +30,6 @@ import {
   BurnchainRewardSlotHolderListResponse,
 } from '@stacks/stacks-blockchain-api-types';
 import { StacksNetwork } from '@stacks/network';
-import BN from 'bn.js';
 import { StackingErrors } from './constants';
 import { fetchPrivate } from '@stacks/common';
 import { decodeBtcAddress } from './utils';

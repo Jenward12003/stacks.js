@@ -9,8 +9,6 @@ import { Buffer as BufferPolyfill } from 'buffer/';
 // so export using the type definition from NodeJS (@types/node).
 import type { Buffer as NodeJSBuffer } from 'buffer';
 
-import BN from 'bn.js';
-
 const AvailableBufferModule: typeof NodeJSBuffer =
   // eslint-disable-next-line node/prefer-global/buffer
   typeof Buffer !== 'undefined' ? Buffer : (BufferPolyfill as any);
@@ -396,4 +394,117 @@ export function intToBigInt(value: IntegerType, signed: boolean): bigint {
 
 export function with0x(value: string): string {
   return !value.startsWith('0x') ? `0x${value}` : value;
+}
+
+export const intToHexString = (integer: IntegerType, lengthBytes = 8): string => {
+  const value = typeof integer === 'bigint' ? integer : intToBigInt(integer, false);
+  return value.toString(16).padStart(lengthBytes * 2, '0');
+};
+
+export function hexToBytes(hex: string): Uint8Array {
+  if (typeof hex !== 'string')
+    throw new TypeError('hexToBytes: expected string, got ' + typeof hex);
+  if (hex.length % 2)
+    throw new Error(`hexToBytes: received invalid unpadded hex, got: ${hex.length}`);
+  const array = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < array.length; i++) {
+    const j = i * 2;
+    array[i] = Number.parseInt(hex.slice(j, j + 2), 16);
+  }
+  return array;
+}
+
+const byteToHexCache: string[] = new Array(0xff);
+
+for (let n = 0; n <= 0xff; ++n) {
+  byteToHexCache[n] = n.toString(16).padStart(2, '0');
+}
+
+export function bytesToHex(uint8a: Uint8Array) {
+  const hexOctets = new Array(uint8a.length);
+  for (let i = 0; i < uint8a.length; ++i) hexOctets[i] = byteToHexCache[uint8a[i]];
+  return hexOctets.join('');
+}
+
+export class BN {
+  _value: bigint;
+
+  constructor(value: number | string | bigint | Uint8Array, endian: string | number = 'be') {
+    if (value instanceof Uint8Array) {
+      const bytes = endian === 'be' ? value : value.reverse();
+      this._value = BigInt(`0x${bytesToHex(bytes)}`);
+    } else {
+      this._value = BigInt(value);
+    }
+  }
+
+  toTwos(size: number): BN {
+    // make sure its in range given the number of bits
+    if (
+      this._value < -(BigInt(1) << (BigInt(size) - BigInt(1))) ||
+      this._value > (BigInt(1) << (BigInt(size) - BigInt(1))) - BigInt(1)
+    )
+      throw `Integer out of range given ${size} bits to represent.`;
+
+    // if positive, return the positive value
+    if (this._value >= BigInt(0)) return new BN(this._value);
+
+    // if negative, convert to twos complement representation
+    const result = ~((-this._value - BigInt(1)) | ~((BigInt(1) << BigInt(size)) - BigInt(1)));
+    return new BN(result);
+  }
+
+  fromTwos(size: number) {
+    if ((this._value & (BigInt(1) << (BigInt(size) - BigInt(1)))) > BigInt(0))
+      this._value = this._value - (BigInt(1) << BigInt(size));
+    return this;
+  }
+
+  toArrayLike(arrayType: typeof AvailableBufferModule, endian: string = 'be', length: number = 16) {
+    let bigInt = this.value;
+    if (endian === 'le') {
+      bigInt = BigInt(`0x${this.value.toString(16).split('').reverse().join('')}`);
+    }
+    const hex = intToHexString(bigInt, length);
+    return arrayType.from(hexToBytes(hex));
+  }
+
+  static isBN(value: any) {
+    if (value instanceof BN) {
+      return true;
+    }
+    if (value && typeof value === 'object' && value.constructor.name === 'BN') {
+      return true;
+    }
+    return false;
+  }
+
+  toString(base: number | string = 10, padding: number = 0) {
+    const baseValue: number = typeof base === 'string' && base === 'hex' ? 16 : Number(base);
+    let bigint = this._value.toString(baseValue);
+    while (padding && bigint.length % padding !== 0) {
+      bigint = '0' + bigint;
+    }
+    return bigint;
+  }
+
+  toNumber() {
+    return Number(this._value.toString());
+  }
+
+  toBuffer() {
+    return this.toArrayLike(AvailableBufferModule);
+  }
+
+  gt(amount: BN) {
+    return this._value > amount.value;
+  }
+
+  lt(amount: BN) {
+    return this._value < amount.value;
+  }
+
+  get value() {
+    return this._value;
+  }
 }

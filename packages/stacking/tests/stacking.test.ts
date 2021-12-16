@@ -1,6 +1,6 @@
 import { StacksTestnet } from '@stacks/network';
+import { BN } from '@stacks/common';
 import fetchMock from 'jest-fetch-mock';
-import BN from 'bn.js';
 import { StackingErrors } from '../src/constants';
 import {
   uintCV,
@@ -953,7 +953,7 @@ test('get account balance', async () => {
   const responseBalanceInfo = await client.getAccountBalance();
 
   expect(fetchMock.mock.calls[0][0]).toEqual(network.getAccountApiUrl(address));
-  expect(responseBalanceInfo.toString()).toEqual(new BN(balanceInfo.balance.substr(2), 'hex').toString());
+  expect(responseBalanceInfo.toString()).toEqual(new BN(balanceInfo.balance, 'hex').toString());
 })
 test('get seconds until next cycle', async () => {
   const address = 'ST3XKKN4RPV69NN1PHFDNX3TYKXT7XPC4N8KC1ARH';

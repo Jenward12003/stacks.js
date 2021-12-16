@@ -5,13 +5,12 @@ import {
   encryptECIES, decryptECIES, getHexFromBN, signECDSA,
   verifyECDSA,  encryptMnemonic, decryptMnemonic,
 } from '../src'
-import { ERROR_CODES, getGlobalScope } from '@stacks/common'
+import { ERROR_CODES, getGlobalScope, BN } from '@stacks/common'
 import * as pbkdf2 from '../src/pbkdf2'
 import * as aesCipher from '../src/aesCipher'
 import * as sha2Hash from '../src/sha2Hash'
 import * as hmacSha256 from '../src/hmacSha256'
 import * as ripemd160 from '../src/hashRipemd160'
-import BN from 'bn.js'
 import { getBufferFromBN } from '../src/ec'
 
 const privateKey = 'a5c61c6ca7b3e7e55edee68566aeab22e4da26baa285c7bd10e8d2218aa3b229'
@@ -461,7 +460,7 @@ test('bn-padded-to-64-bytes', () => {
     const ephemeralSK = ecurve.keyFromPrivate(hex)
     const ephemeralPK = ephemeralSK.getPublic()
     const sharedSecret = ephemeralSK.derive(ephemeralPK)
-    return getHexFromBN(sharedSecret).length === 64
+    return getHexFromBN(new BN(sharedSecret.toString())).length === 64
   })
 
   expect(results.every(x => x)).toEqual(true)
