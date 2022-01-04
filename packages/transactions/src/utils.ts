@@ -1,4 +1,4 @@
-import { Buffer } from '@stacks/common';
+import { Buffer, deepCopy } from '@stacks/common';
 import { sha256, sha512 } from 'sha.js';
 import { ClarityValue, serializeCV } from './clarity';
 import RIPEMD160 from 'ripemd160-min';
@@ -6,7 +6,6 @@ import randombytes from 'randombytes';
 import { deserializeCV } from './clarity';
 import fetch from 'cross-fetch';
 import { c32addressDecode } from 'c32check';
-import lodashCloneDeep from 'lodash/cloneDeep';
 import { with0x } from '@stacks/common';
 
 export { randombytes as randomBytes };
@@ -53,7 +52,7 @@ export const exceedsMaxLengthBytes = (string: string, maxLengthBytes: number): b
   string ? Buffer.from(string).length > maxLengthBytes : false;
 
 export function cloneDeep<T>(obj: T): T {
-  return lodashCloneDeep(obj);
+  return deepCopy(obj);
 }
 
 export function omit<T, K extends keyof any>(obj: T, prop: K): Omit<T, K> {
